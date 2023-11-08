@@ -83,7 +83,7 @@ class CommunityScreen extends ConsumerWidget {
                                             horizontal: 25),
                                       ),
                                       child:
-                                          community!.members.contains(user.uid)
+                                          community.members.contains(user.uid)
                                               ? 'Joined'
                                                   .text
                                                   .color(Colors.blue)
