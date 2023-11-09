@@ -36,6 +36,7 @@ class AuthRepository {
 
   Stream<User?> get authStateChange => _auth.authStateChanges();
 
+  //! Sign in with google
   FutureEither<UserModel> signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
@@ -74,11 +75,18 @@ class AuthRepository {
     }
   }
 
+  //! Get user data
   Stream<UserModel> getUserData(String uid) {
     return _users.doc(uid).snapshots().map(
           (event) => UserModel.fromMap(
             event.data() as Map<String, dynamic>,
           ),
         );
+  }
+
+  //! logout
+  void logout() async {
+    await _googleSignIn.signOut();
+    await _auth.signOut();
   }
 }

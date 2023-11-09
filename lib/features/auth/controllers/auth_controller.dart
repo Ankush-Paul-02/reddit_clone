@@ -38,6 +38,7 @@ class AuthController extends StateNotifier<bool> {
 
   Stream<User?> get authStateChange => _authRepository.authStateChange;
 
+  //! Sgn in with google
   void signInWithGoogle(BuildContext context) async {
     state = true;
     final user = await _authRepository.signInWithGoogle();
@@ -49,7 +50,13 @@ class AuthController extends StateNotifier<bool> {
     );
   }
 
+  //! Get user data
   Stream<UserModel> getUserData(String uid) {
     return _authRepository.getUserData(uid);
+  }
+
+  //! logout
+  void logout() async {
+    _authRepository.logout();
   }
 }
