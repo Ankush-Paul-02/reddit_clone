@@ -11,11 +11,15 @@ import 'package:routemaster/routemaster.dart';
 
 import '../../../core/utils.dart';
 
-final getCommunityByNameProvider = StreamProvider.family((ref, String name) {
-  return ref
-      .watch(communityControllerProvider.notifier)
-      .getCommunityByName(name);
-});
+final searchCommunityProvider = StreamProvider.family(
+  (ref, String query) =>
+      ref.watch(communityControllerProvider.notifier).searchCommunity(query),
+);
+
+final getCommunityByNameProvider = StreamProvider.family(
+  (ref, String name) =>
+      ref.watch(communityControllerProvider.notifier).getCommunityByName(name),
+);
 
 final userCommunityProvider = StreamProvider((ref) {
   final communityController = ref.watch(communityControllerProvider.notifier);
@@ -82,7 +86,7 @@ class CommunityController extends StateNotifier<bool> {
   }
 
   //! Edit community
-    void editCommunity({
+  void editCommunity({
     required File? profileFile,
     required File? bannerFile,
     required BuildContext context,
@@ -121,5 +125,10 @@ class CommunityController extends StateNotifier<bool> {
       (l) => showSnackBar(context, l.message),
       (r) => Routemaster.of(context).pop(),
     );
+  }
+
+  //! Search community
+  Stream<List<Community>> searchCommunity(String query) {
+    return _communityRepository.searchCommunity(query);
   }
 }

@@ -56,6 +56,7 @@ class _EditCommunityScreenState extends ConsumerState<EditCommunityScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = ref.watch(communityControllerProvider);
     return ref.watch(getCommunityByNameProvider(widget.name)).when(
           data: (community) => Scaffold(
             backgroundColor: Palette.darkModeAppTheme.colorScheme.background,
@@ -69,61 +70,63 @@ class _EditCommunityScreenState extends ConsumerState<EditCommunityScreen> {
                 ),
               ],
             ),
-            body: Column(
-              children: [
-                SizedBox(
-                  height: 200,
-                  child: Stack(
+            body: isLoading
+                ? const Loader()
+                : Column(
                     children: [
-                      DottedBorder(
-                        radius: const Radius.circular(10),
-                        dashPattern: const [10, 4],
-                        strokeCap: StrokeCap.round,
-                        borderType: BorderType.RRect,
-                        color: Palette
-                            .darkModeAppTheme.textTheme.bodyMedium!.color!,
-                        child: Container(
-                          width: 100.w,
-                          height: 150,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: bannerFile != null
-                              ? Image.file(bannerFile!)
-                              : community.banner.isEmpty ||
-                                      community.banner ==
-                                          Constants.bannerDefault
-                                  ? const Icon(
-                                      Icons.camera_alt_outlined,
-                                      size: 40,
-                                    )
-                                  : Image.network(
-                                      community.banner,
-                                      fit: BoxFit.cover,
-                                    ),
+                      SizedBox(
+                        height: 200,
+                        child: Stack(
+                          children: [
+                            DottedBorder(
+                              radius: const Radius.circular(10),
+                              dashPattern: const [10, 4],
+                              strokeCap: StrokeCap.round,
+                              borderType: BorderType.RRect,
+                              color: Palette.darkModeAppTheme.textTheme
+                                  .bodyMedium!.color!,
+                              child: Container(
+                                width: 100.w,
+                                height: 150,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: bannerFile != null
+                                    ? Image.file(bannerFile!)
+                                    : community.banner.isEmpty ||
+                                            community.banner ==
+                                                Constants.bannerDefault
+                                        ? const Icon(
+                                            Icons.camera_alt_outlined,
+                                            size: 40,
+                                          )
+                                        : Image.network(
+                                            community.banner,
+                                            fit: BoxFit.cover,
+                                          ),
+                              ),
+                            ).onTap(
+                              () => selectBannerImage(),
+                            ),
+                            Positioned(
+                              bottom: 20,
+                              left: 20,
+                              child: profileFile != null
+                                  ? CircleAvatar(
+                                      backgroundImage: FileImage(profileFile!),
+                                      radius: 32,
+                                    ).onTap(() => selectProfileImage())
+                                  : const CircleAvatar(
+                                      backgroundImage:
+                                          NetworkImage(Constants.avatarDefault),
+                                      radius: 32,
+                                    ).onTap(() => selectProfileImage()),
+                            ),
+                          ],
                         ),
-                      ).onTap(
-                        () => selectBannerImage(),
-                      ),
-                      Positioned(
-                        bottom: 20,
-                        left: 20,
-                        child: profileFile != null
-                            ? CircleAvatar(
-                                backgroundImage: FileImage(profileFile!),
-                                radius: 32,
-                              ).onTap(() => selectProfileImage())
-                            : const CircleAvatar(
-                                backgroundImage:
-                                    NetworkImage(Constants.avatarDefault),
-                                radius: 32,
-                              ).onTap(() => selectProfileImage()),
-                      ),
+                      )
                     ],
-                  ),
-                )
-              ],
-            ).p(8),
+                  ).p(8),
           ),
           error: (error, stackTrace) => ErrorText(error: error.toString()),
           loading: () => const Loader(),
