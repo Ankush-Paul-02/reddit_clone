@@ -9,7 +9,6 @@ class Palette {
   static var blueColor = Colors.blue.shade300;
 
   static var darkModeAppTheme = ThemeData.dark(useMaterial3: true).copyWith(
-
     scaffoldBackgroundColor: blackColor,
     cardColor: greyColor,    
     appBarTheme: const AppBarTheme(
