@@ -84,8 +84,9 @@ class CommunityRepository {
                   ) +
                   String.fromCharCode(
                     query.codeUnitAt(
-                      query.length - 1,
-                    ) + 1,
+                          query.length - 1,
+                        ) +
+                        1,
                   ),
         )
         .snapshots()
@@ -97,5 +98,56 @@ class CommunityRepository {
       }
       return communities;
     });
+  }
+
+  //! Join community
+  FutureVoid joinCommunity(String communityName, String userId) async {
+    try {
+      return right(
+        _communities.doc(communityName).update(
+          {
+            'members': FieldValue.arrayUnion([userId]),
+          },
+        ),
+      );
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+  //! Join community
+  FutureVoid leaveCommunity(String communityName, String userId) async {
+    try {
+      return right(
+        _communities.doc(communityName).update(
+          {
+            'members': FieldValue.arrayRemove([userId]),
+          },
+        ),
+      );
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+  //! Add mods
+  FutureVoid addMods(String communityName, List<String> uIds) async {
+    try {
+      return right(
+        _communities.doc(communityName).update(
+          {
+            'mods': uIds,
+          },
+        ),
+      );
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
   }
 }

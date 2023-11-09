@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:reddit_clone/core/constants/constants.dart';
 import 'package:reddit_clone/core/provider/storage_repository_provider.dart';
+import 'package:reddit_clone/core/typedef.dart';
 import 'package:reddit_clone/features/auth/controllers/auth_controller.dart';
 import 'package:reddit_clone/features/community/repository/community_repository.dart';
 import 'package:reddit_clone/model/community_model.dart';
@@ -130,5 +131,36 @@ class CommunityController extends StateNotifier<bool> {
   //! Search community
   Stream<List<Community>> searchCommunity(String query) {
     return _communityRepository.searchCommunity(query);
+  }
+
+  //! Join/leave community
+  void joinCommunity(Community community, BuildContext context) async {
+    final user = _ref.read(userProvider)!;
+
+    FutureEither<void> res;
+    if (community.members.contains(user.uid)) {
+      res = _communityRepository.leaveCommunity(community.name, user.uid);
+    } else {
+      res = _communityRepository.joinCommunity(community.name, user.uid);
+    }
+
+    final result = await res;
+    result.fold((l) => showSnackBar(context, l.message), (r) {
+      if (community.members.contains(user.uid)) {
+        showSnackBar(context, 'Community left successfully!');
+      } else {
+        showSnackBar(context, 'Community joined successfully!');
+      }
+    });
+  }
+
+  //! Add mods
+  void addMods(
+      String communityName, List<String> uIds, BuildContext context) async {
+    final res = await _communityRepository.addMods(communityName, uIds);
+    res.fold(
+      (l) => showSnackBar(context, l.message),
+      (r) => Routemaster.of(context).pop(),
+    );
   }
 }
