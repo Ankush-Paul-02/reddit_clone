@@ -5,6 +5,7 @@ import 'package:reddit_clone/core/common/loader.dart';
 import 'package:reddit_clone/features/auth/controllers/auth_controller.dart';
 import 'package:reddit_clone/features/community/controller/community_controller.dart';
 import 'package:reddit_clone/model/community_model.dart';
+import 'package:reddit_clone/theme/palette.dart';
 import 'package:routemaster/routemaster.dart';
 import 'package:velocity_x/velocity_x.dart';
 
@@ -115,6 +116,8 @@ class CommunityScreen extends ConsumerWidget {
                               '${community.members.length} members',
                             ),
                           ),
+                          10.heightBox,
+                          const Divider(thickness: 2, color: Palette.greyColor),
                         ],
                       ),
                     ),
