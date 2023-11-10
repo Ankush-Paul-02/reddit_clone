@@ -46,7 +46,7 @@ class _MyAppState extends ConsumerState<MyApp> {
             builder: (context, orientation, deviceType) => MaterialApp.router(
               title: 'Reddit',
               debugShowCheckedModeBanner: false,
-              theme: Palette.darkModeAppTheme,
+              theme: ref.watch(themeNotifierProvider),
               routerDelegate: RoutemasterDelegate(
                 routesBuilder: (context) {
                   if (data != null) {
