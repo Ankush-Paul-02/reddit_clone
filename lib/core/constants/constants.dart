@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:reddit_clone/features/post/add_post_screen.dart';
+import 'package:reddit_clone/features/post/screens/add_post_screen.dart';
 
 import '../../features/feed/feed_screen.dart';
 

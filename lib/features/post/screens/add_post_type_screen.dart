@@ -7,6 +7,7 @@ import 'package:reddit_clone/core/common/error_text.dart';
 import 'package:reddit_clone/core/common/loader.dart';
 import 'package:reddit_clone/core/utils.dart';
 import 'package:reddit_clone/features/community/controller/community_controller.dart';
+import 'package:reddit_clone/features/post/controllers/post_controller.dart';
 import 'package:reddit_clone/model/community_model.dart';
 import 'package:reddit_clone/theme/palette.dart';
 import 'package:sizer/sizer.dart';
@@ -46,6 +47,37 @@ class _AddPostTypeScreenState extends ConsumerState<AddPostTypeScreen> {
     }
   }
 
+  void sharePost() {
+    if (widget.type == 'image' &&
+        bannerFile != null &&
+        titleController.text.isNotEmpty) {
+      ref.read(postControllerProvider.notifier).shareImagePost(
+            context: context,
+            title: titleController.text.trim(),
+            file: bannerFile,
+            selectedCommunity: selectedCommunity ?? communities[0],
+          );
+    } else if (widget.type == 'text' && titleController.text.isNotEmpty) {
+      ref.read(postControllerProvider.notifier).shareTextPost(
+            context: context,
+            title: titleController.text.trim(),
+            description: descriptionController.text.trim(),
+            selectedCommunity: selectedCommunity ?? communities[0],
+          );
+    } else if (widget.type == 'link' &&
+        titleController.text.isNotEmpty &&
+        linkController.text.isNotEmpty) {
+      ref.read(postControllerProvider.notifier).shareLinkPost(
+            context: context,
+            title: titleController.text.trim(),
+            link: linkController.text.trim(),
+            selectedCommunity: selectedCommunity ?? communities[0],
+          );
+    } else {
+      showSnackBar(context, 'Please enter all the fields!');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isTypeImage = widget.type == 'image';
@@ -59,7 +91,7 @@ class _AddPostTypeScreenState extends ConsumerState<AddPostTypeScreen> {
         centerTitle: true,
         actions: [
           TextButton(
-            onPressed: () {},
+            onPressed: sharePost,
             child: 'Share'.text.color(Colors.blue).make(),
           ),
         ],
