@@ -6,6 +6,7 @@ import 'package:reddit_clone/core/constants/firebase_constants.dart';
 import 'package:reddit_clone/core/typedef.dart';
 
 import '../../../core/provider/firebase_provider.dart';
+import '../../../model/community_model.dart';
 import '../../../model/post_model.dart';
 
 final postRepositoryProvider = Provider(
@@ -26,6 +27,7 @@ class PostRepository {
         FirebaseConstants.postsCollection,
       );
 
+  //! Add post
   FutureVoid addPost(Post post) async {
     try {
       return right(
@@ -36,5 +38,26 @@ class PostRepository {
     } catch (e) {
       return left(Failure(e.toString()));
     }
-  }    
+  }
+
+  //! Fetch post by community name
+  Stream<List<Post>> fetchUserPosts(List<Community> communities) {
+    return _posts
+        .where(
+          'communityName',
+          whereIn: communities.map((e) => e.name).toList(),
+        )
+        .orderBy(
+          'createdAt',
+          descending: true,
+        )
+        .snapshots()
+        .map(
+          (event) => event.docs
+              .map(
+                (e) => Post.fromMap(e.data() as Map<String, dynamic>),
+              )
+              .toList(),
+        );
+  }
 }

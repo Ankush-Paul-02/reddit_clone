@@ -10,6 +10,7 @@ environment:
   sdk: ">=2.18.2 <3.0.0"
 
 dependencies:
+  any_link_preview: ^3.0.1
   cloud_firestore: ^4.12.2
   cupertino_icons: ^1.0.2
   dotted_border: ^2.1.0
@@ -43,6 +44,6 @@ flutter:
     - assets/images/
 
   fonts:
-    - family: MyFlutterApp
+    - family: Reddit
       fonts:
         - asset: assets/fonts/Reddit.ttf
