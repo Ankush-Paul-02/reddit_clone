@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:reddit_clone/features/user/controller/user_profile_controller.dart';
 import 'package:reddit_clone/theme/palette.dart';
 import 'package:routemaster/routemaster.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 import '../../../core/common/error_text.dart';
 import '../../../core/common/loader.dart';
+import '../../../core/common/post_card.dart';
 import '../../auth/controllers/auth_controller.dart';
 
 class UserProfileScreen extends ConsumerWidget {
@@ -36,7 +38,7 @@ class UserProfileScreen extends ConsumerWidget {
                           ),
                         ),
                         Align(
-                          alignment: Alignment.topLeft,
+                          alignment: Alignment.topRight,
                           child: CircleAvatar(
                             backgroundImage: NetworkImage(user.profilePic),
                             radius: 45,
@@ -98,7 +100,19 @@ class UserProfileScreen extends ConsumerWidget {
                   ),
                 ];
               },
-              body: 'Display Posts'.text.make().centered(),
+              body: ref.watch(getUserPostsProvider(uid)).when(
+                    data: (posts) => ListView.builder(
+                      itemCount: posts.length,
+                      itemBuilder: (context, index) {
+                        final post = posts[index];
+                        return PostCard(post: post);
+                      },
+                    ),
+                    error: (error, stackTrace) => ErrorText(
+                      error: error.toString(),
+                    ),
+                    loading: () => const Loader(),
+                  ),
             ),
             error: (error, stackTrace) => ErrorText(error: error.toString()),
             loading: () => const Loader(),

@@ -11,6 +11,17 @@ import 'package:uuid/uuid.dart';
 
 import '../../../core/provider/storage_repository_provider.dart';
 import '../../../core/utils.dart';
+import '../../../model/comment_model.dart';
+
+final getPostCommentsProvider = StreamProvider.family((ref, String postId) {
+  final postController = ref.watch(postControllerProvider.notifier);
+  return postController.fetchPostComments(postId);
+});
+
+final getPostByIdProvider = StreamProvider.family((ref, String postId) {
+  final postController = ref.watch(postControllerProvider.notifier);
+  return postController.getPostById(postId);
+});
 
 final userPostsProvider =
     StreamProvider.family((ref, List<Community> communities) {
@@ -169,5 +180,61 @@ class PostController extends StateNotifier<bool> {
       return _postRepository.fetchUserPosts(communities);
     }
     return Stream.value([]);
+  }
+
+  //! Delete post
+  void deletePost(Post post, BuildContext context) async {
+    final res = await _postRepository.deletePost(post);
+    res.fold(
+      (l) => null,
+      (r) => showSnackBar(
+        context,
+        "Post deleted successfully!",
+      ),
+    );
+  }
+
+  //! Up vote
+  void upVote(Post post) async {
+    final userId = _ref.read(userProvider)!.uid;
+    _postRepository.upVote(post, userId);
+  }
+
+  //! Down vote
+  void downVote(Post post) async {
+    final userId = _ref.read(userProvider)!.uid;
+    _postRepository.downVote(post, userId);
+  }
+
+  //! Get post by id
+  Stream<Post> getPostById(String postId) {
+    return _postRepository.getPostById(postId);
+  }
+
+  //! Save comment
+  void saveComment({
+    required BuildContext context,
+    required String commentText,
+    required Post post,
+  }) async {
+    final user = _ref.read(userProvider);
+    Comment comment = Comment(
+      id: const Uuid().v1(),
+      text: commentText,
+      createdAt: DateTime.now(),
+      postId: post.id,
+      username: user!.name,
+      profilePic: user.profilePic,
+    );
+    final res = await _postRepository.saveComment(comment);
+    res.fold(
+      (l) => showSnackBar(context, l.message),
+      (r) => null,
+    );
+  }
+
+  //! Fetch comments
+  Stream<List<Comment>> fetchPostComments(String postId) {
+    return _postRepository.getCommentsOfPost(postId);
   }
 }

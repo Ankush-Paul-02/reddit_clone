@@ -9,6 +9,8 @@ import 'package:reddit_clone/theme/palette.dart';
 import 'package:routemaster/routemaster.dart';
 import 'package:velocity_x/velocity_x.dart';
 
+import '../../../core/common/post_card.dart';
+
 class CommunityScreen extends ConsumerWidget {
   final String name;
   const CommunityScreen({super.key, required this.name});
@@ -124,7 +126,19 @@ class CommunityScreen extends ConsumerWidget {
                   ),
                 ];
               },
-              body: Container(),
+              body: ref.watch(getCommunityPostsProvider(name)).when(
+                    data: (posts) => ListView.builder(
+                      itemCount: posts.length,
+                      itemBuilder: (context, index) {
+                        final post = posts[index];
+                        return PostCard(post: post);
+                      },
+                    ),
+                    error: (error, stackTrace) => ErrorText(
+                      error: error.toString(),
+                    ),
+                    loading: () => const Loader(),
+                  ),
             ),
             error: (error, stackTrace) => ErrorText(error: error.toString()),
             loading: () => const Loader(),

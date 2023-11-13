@@ -31,9 +31,11 @@ class _AddModScreenState extends ConsumerState<AddModScreen> {
   }
 
   void saveMods(WidgetRef ref, BuildContext context) {
-    ref
-        .read(communityControllerProvider.notifier)
-        .addMods(widget.name, uIds.toList(), context);
+    ref.read(communityControllerProvider.notifier).addMods(
+          widget.name,
+          uIds.toList(),
+          context,
+        );
   }
 
   @override
@@ -70,8 +72,9 @@ class _AddModScreenState extends ConsumerState<AddModScreen> {
                           title: user.name.text.make(),
                         );
                       },
-                      error: (error, stackTrace) =>
-                          ErrorText(error: error.toString()),
+                      error: (error, stackTrace) => ErrorText(
+                        error: error.toString(),
+                      ),
                       loading: () => const Loader(),
                     );
               },
