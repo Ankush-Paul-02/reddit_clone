@@ -33,6 +33,15 @@ class PostCard extends ConsumerWidget {
     ref.read(postControllerProvider.notifier).downVote(post);
   }
 
+  //! award post
+  void awardPost(WidgetRef ref, BuildContext context, String award) async {
+    ref.read(postControllerProvider.notifier).awardPost(
+          award: award,
+          context: context,
+          post: post,
+        );
+  }
+
   //! Navigate to user profile
   void navigateToUserProfile(BuildContext context) {
     Routemaster.of(context).push('/u/${post.uid}');
@@ -112,6 +121,23 @@ class PostCard extends ConsumerWidget {
                               ),
                           ],
                         ),
+                        if (post.awards.isNotEmpty) ...[
+                          5.heightBox,
+                          SizedBox(
+                            height: 25,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: post.awards.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                final award = post.awards[index];
+                                return Image.asset(
+                                  Constants.awards[award]!,
+                                  height: 24,
+                                );
+                              },
+                            ),
+                          )
+                        ],
                         //! Post title
                         post.title.text.size(19).bold.make().pOnly(top: 10),
                         5.heightBox,
@@ -198,8 +224,11 @@ class PostCard extends ConsumerWidget {
                               ],
                             ),
                             ref
-                                .watch(getCommunityByNameProvider(
-                                    post.communityName))
+                                .watch(
+                                  getCommunityByNameProvider(
+                                    post.communityName,
+                                  ),
+                                )
                                 .when(
                                   data: (community) {
                                     if (community.mods.contains(user.uid)) {
@@ -218,6 +247,35 @@ class PostCard extends ConsumerWidget {
                                   ),
                                   loading: () => const Loader(),
                                 ),
+                            IconButton(
+                              onPressed: () => showDialog(
+                                context: context,
+                                builder: (context) => Dialog(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(20),
+                                    child: GridView.builder(
+                                      shrinkWrap: true,
+                                      gridDelegate:
+                                          const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 4,
+                                      ),
+                                      itemCount: user.awards.length,
+                                      itemBuilder: (context, index) {
+                                        final award = user.awards[index];
+                                        return Image.asset(
+                                                Constants.awards[award]!)
+                                            .p(8)
+                                            .onInkTap(
+                                              () => awardPost(
+                                                  ref, context, award),
+                                            );
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              icon: const Icon(Icons.card_giftcard_outlined),
+                            ),
                           ],
                         ),
                       ],
