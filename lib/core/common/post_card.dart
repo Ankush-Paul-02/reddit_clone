@@ -63,7 +63,8 @@ class PostCard extends ConsumerWidget {
     final isTypeText = post.type == 'text';
     final isTypeLink = post.type == 'link';
     final currentTheme = ref.watch(themeNotifierProvider);
-    final user = ref.watch(userProvider);
+    final user = ref.watch(userProvider)!;
+    final isGuest = !user.isAuthenticated;
     return Column(
       children: [
         Container(
@@ -111,7 +112,8 @@ class PostCard extends ConsumerWidget {
                             ).pOnly(left: 8),
                             const Spacer(),
                             //! Delete icon
-                            if (post.uid == user!.uid)
+
+                            if (post.uid == user.uid)
                               IconButton(
                                 onPressed: () => deletePost(ref, context),
                                 icon: Icon(
@@ -179,7 +181,8 @@ class PostCard extends ConsumerWidget {
                             Row(
                               children: [
                                 IconButton(
-                                  onPressed: () => upVotePost(ref),
+                                  onPressed: () =>
+                                      isGuest ? () {} : upVotePost(ref),
                                   icon: Icon(
                                     Constants.up,
                                     size: 30,
@@ -196,7 +199,8 @@ class PostCard extends ConsumerWidget {
                                     .size(17)
                                     .make(),
                                 IconButton(
-                                  onPressed: () => downVotePost(ref),
+                                  onPressed: () =>
+                                      isGuest ? () {} : downVotePost(ref),
                                   icon: Icon(
                                     Constants.down,
                                     size: 30,
@@ -248,32 +252,35 @@ class PostCard extends ConsumerWidget {
                                   loading: () => const Loader(),
                                 ),
                             IconButton(
-                              onPressed: () => showDialog(
-                                context: context,
-                                builder: (context) => Dialog(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(20),
-                                    child: GridView.builder(
-                                      shrinkWrap: true,
-                                      gridDelegate:
-                                          const SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 4,
+                              onPressed: isGuest
+                                  ? () {}
+                                  : () => showDialog(
+                                        context: context,
+                                        builder: (context) => Dialog(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(20),
+                                            child: GridView.builder(
+                                              shrinkWrap: true,
+                                              gridDelegate:
+                                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                                crossAxisCount: 4,
+                                              ),
+                                              itemCount: user.awards.length,
+                                              itemBuilder: (context, index) {
+                                                final award =
+                                                    user.awards[index];
+                                                return Image.asset(Constants
+                                                        .awards[award]!)
+                                                    .p(8)
+                                                    .onInkTap(
+                                                      () => awardPost(
+                                                          ref, context, award),
+                                                    );
+                                              },
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                      itemCount: user.awards.length,
-                                      itemBuilder: (context, index) {
-                                        final award = user.awards[index];
-                                        return Image.asset(
-                                                Constants.awards[award]!)
-                                            .p(8)
-                                            .onInkTap(
-                                              () => awardPost(
-                                                  ref, context, award),
-                                            );
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              ),
                               icon: const Icon(Icons.card_giftcard_outlined),
                             ),
                           ],

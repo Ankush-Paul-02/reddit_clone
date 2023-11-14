@@ -7,6 +7,7 @@ import 'package:reddit_clone/features/post/controllers/post_controller.dart';
 import 'package:reddit_clone/features/post/widgets/comment_card.dart';
 
 import '../../../model/post_model.dart';
+import '../../auth/controllers/auth_controller.dart';
 
 class CommentsScreen extends ConsumerStatefulWidget {
   final String postId;
@@ -41,6 +42,8 @@ class _CommentsScreenState extends ConsumerState<CommentsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(userProvider)!;
+    final isGuest = !user.isAuthenticated;
     return Scaffold(
       appBar: AppBar(),
       body: ref.watch(getPostByIdProvider(widget.postId)).when(
@@ -48,16 +51,16 @@ class _CommentsScreenState extends ConsumerState<CommentsScreen> {
               return Column(
                 children: [
                   PostCard(post: data),
-                  TextField(
-                        onSubmitted: (val) => addComment(data),
-                        controller: commentController,
-                        decoration: const InputDecoration(
-                          hintText: 'What are your thoughts?',
-                          filled: true,
-                          border: InputBorder.none,
-                        ),
+                  if (!isGuest)
+                    TextField(
+                      onSubmitted: (val) => addComment(data),
+                      controller: commentController,
+                      decoration: const InputDecoration(
+                        hintText: 'What are your thoughts?',
+                        filled: true,
+                        border: InputBorder.none,
                       ),
-                    
+                    ),
                   ref.watch(getPostCommentsProvider(widget.postId)).when(
                         data: (data) {
                           return Expanded(

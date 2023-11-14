@@ -28,6 +28,8 @@ class CommunityScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userProvider)!;
+    final isGuest = !user.isAuthenticated;
+
     return Scaffold(
       body: ref.watch(getCommunityByNameProvider(name)).when(
             data: (community) => NestedScrollView(
@@ -71,45 +73,46 @@ class CommunityScreen extends ConsumerWidget {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              community.mods.contains(user.uid)
-                                  ? OutlinedButton(
-                                      onPressed: () =>
-                                          navigateToModTools(context),
-                                      style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
+                              if (!isGuest)
+                                community.mods.contains(user.uid)
+                                    ? OutlinedButton(
+                                        onPressed: () =>
+                                            navigateToModTools(context),
+                                        style: ElevatedButton.styleFrom(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 25),
                                         ),
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 25),
-                                      ),
-                                      child: 'Mod Tools'
-                                          .text
-                                          .color(Colors.blue)
-                                          .make(),
-                                    )
-                                  : OutlinedButton(
-                                      onPressed: () => joinCommunity(
-                                          context, community, ref),
-                                      style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
+                                        child: 'Mod Tools'
+                                            .text
+                                            .color(Colors.blue)
+                                            .make(),
+                                      )
+                                    : OutlinedButton(
+                                        onPressed: () => joinCommunity(
+                                            context, community, ref),
+                                        style: ElevatedButton.styleFrom(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 25),
                                         ),
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 25),
+                                        child:
+                                            community.members.contains(user.uid)
+                                                ? 'Leave'
+                                                    .text
+                                                    .color(Colors.blue)
+                                                    .make()
+                                                : 'Join'
+                                                    .text
+                                                    .color(Colors.blue)
+                                                    .make(),
                                       ),
-                                      child:
-                                          community.members.contains(user.uid)
-                                              ? 'Leave'
-                                                  .text
-                                                  .color(Colors.blue)
-                                                  .make()
-                                              : 'Join'
-                                                  .text
-                                                  .color(Colors.blue)
-                                                  .make(),
-                                    ),
                             ],
                           ),
                           Padding(

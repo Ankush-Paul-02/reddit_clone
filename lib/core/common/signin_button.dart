@@ -7,10 +7,16 @@ import 'package:velocity_x/velocity_x.dart';
 import '../../features/auth/controllers/auth_controller.dart';
 
 class SigninButton extends ConsumerWidget {
-  const SigninButton({super.key});
+  final bool isFromLogin;
+  const SigninButton({
+    super.key,
+    this.isFromLogin = true,
+  });
 
   void signInWithGoogle(WidgetRef ref, BuildContext context) {
-    ref.read(authControllerProvider.notifier).signInWithGoogle(context);
+    ref
+        .read(authControllerProvider.notifier)
+        .signInWithGoogle(context, isFromLogin);
   }
 
   @override

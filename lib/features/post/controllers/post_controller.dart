@@ -25,8 +25,15 @@ final getPostByIdProvider = StreamProvider.family((ref, String postId) {
   return postController.getPostById(postId);
 });
 
-final userPostsProvider =
-    StreamProvider.family((ref, List<Community> communities) {
+final guestPostsProvider = StreamProvider((ref) {
+  final postController = ref.watch(postControllerProvider.notifier);
+  return postController.fetchGuestPosts();
+});
+
+final userPostsProvider = StreamProvider.family((
+  ref,
+  List<Community> communities,
+) {
   final postController = ref.watch(postControllerProvider.notifier);
   return postController.fetchUserPosts(communities);
 });
@@ -255,6 +262,7 @@ class PostController extends StateNotifier<bool> {
     return _postRepository.getCommentsOfPost(postId);
   }
 
+  //! Give awards
   void awardPost({
     required Post post,
     required String award,
@@ -275,5 +283,10 @@ class PostController extends StateNotifier<bool> {
         Routemaster.of(context).pop();
       },
     );
+  }
+
+  //! Fetch guest posts
+  Stream<List<Post>> fetchGuestPosts() {
+    return _postRepository.fetchGuestPosts();
   }
 }

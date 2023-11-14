@@ -144,6 +144,7 @@ class PostRepository {
     }
   }
 
+  //! Get post comments
   Stream<List<Comment>> getCommentsOfPost(String postId) {
     return _comments
         .where('postId', isEqualTo: postId)
@@ -160,6 +161,7 @@ class PostRepository {
         );
   }
 
+  //! Give awards to post
   FutureVoid awardPost(Post post, String award, String senderId) async {
     try {
       await _posts.doc(post.id).update({
@@ -176,5 +178,23 @@ class PostRepository {
     } catch (e) {
       return left(Failure(e.toString()));
     }
+  }
+
+  //! Fetch guest posts
+  Stream<List<Post>> fetchGuestPosts() {
+    return _posts
+        .orderBy(
+          'createdAt',
+          descending: true,
+        )
+        .limit(10)
+        .snapshots()
+        .map(
+          (event) => event.docs
+              .map(
+                (e) => Post.fromMap(e.data() as Map<String, dynamic>),
+              )
+              .toList(),
+        );
   }
 }
