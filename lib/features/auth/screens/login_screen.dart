@@ -4,6 +4,7 @@ import 'package:reddit_clone/core/common/loader.dart';
 import 'package:reddit_clone/core/common/signin_button.dart';
 import 'package:reddit_clone/core/constants/constants.dart';
 import 'package:reddit_clone/features/auth/controllers/auth_controller.dart';
+import 'package:reddit_clone/responsive/responsive.dart';
 import 'package:reddit_clone/theme/palette.dart';
 import 'package:velocity_x/velocity_x.dart';
 
@@ -48,7 +49,9 @@ class LoginScreen extends ConsumerWidget {
                   height: 400,
                 ).p(8),
                 20.heightBox,
-                const SigninButton(),
+                const Responsive(
+                  child: SigninButton(),
+                ).centered(),
               ],
             ),
     );

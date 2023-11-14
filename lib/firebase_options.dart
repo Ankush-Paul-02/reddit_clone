@@ -16,11 +16,8 @@ import 'package:flutter/foundation.dart'
 /// ```
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
-    if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+     if (kIsWeb) {
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -57,6 +54,15 @@ class DefaultFirebaseOptions {
     appId: '1:308765660885:android:00131304e2fe45fb00b45c',
     messagingSenderId: '308765660885',
     projectId: 'reddit-1df27',
+    storageBucket: 'reddit-1df27.appspot.com',
+  );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyCmPwc4WpUeYLapXb8aFmgcX5dAH1IlkDQ',
+    appId: '1:308765660885:android:00131304e2fe45fb00b45c',
+    messagingSenderId: '308765660885',
+    projectId: 'reddit-1df27',
+    authDomain: 'reddit-1df27.firebaseapp.com',
     storageBucket: 'reddit-1df27.appspot.com',
   );
 }
