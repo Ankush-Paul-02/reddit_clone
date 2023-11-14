@@ -77,7 +77,6 @@ class PostCard extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: Row(
               children: [
-                if (kIsWeb)
                 Column(
                   children: [
                     Container(
